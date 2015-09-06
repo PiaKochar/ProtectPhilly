@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HIV_Prevention</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_splash_page">Intro Page</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_directions_list">Directions</string>
+    <string name="title_activity_info">HIV Information and Statistics</string>
+</resources>
