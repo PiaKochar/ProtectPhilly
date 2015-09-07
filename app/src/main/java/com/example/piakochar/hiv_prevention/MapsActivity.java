@@ -69,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements JSONParserCallback
     private boolean allowDirections;
     private String[] directions;
     final static String DIRECTIONS = "com.example.piakochar.hiv_prevention.DIRECTIONS";
+    private String provider
 
     private boolean clinics;
     @Override
@@ -177,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements JSONParserCallback
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
 
         // Enable MyLocation Layer of Google Map
         //mMap.setMyLocationEnabled(true);
@@ -187,7 +188,7 @@ public class MapsActivity extends FragmentActivity implements JSONParserCallback
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
         // Get the name of the best provider
-        String provider = locationManager.getBestProvider(criteria, true);
+        provider = locationManager.getBestProvider(criteria, false);
 
         // Get Current Location
         try {
@@ -198,9 +199,8 @@ public class MapsActivity extends FragmentActivity implements JSONParserCallback
             if (myLocation == null) {
                 here = new LatLng(39.905317, -75.173490);
             } else {
-                double latitude = myLocation.getLatitude();
-                double longitude = myLocation.getLongitude();
-                here = new LatLng(latitude, longitude);
+                System.out.println("Provider " + provider + " has been selected.");
+                onLocationChanged(location);
             }
 
             // Show the current location in Google Map
@@ -359,4 +359,47 @@ public class MapsActivity extends FragmentActivity implements JSONParserCallback
     public void serviceFailure(Exception exception) {
         Toast.makeText(this, exception.toString(), Toast.LENGTH_LONG).show();
     }
+
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(provider, 400, 1, this);
+    }
+
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double lat = (double) (location.getLatitude());
+        double lng = (double) (location.getLongitude());
+        here = new LatLng(lat, lng);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(this, "Enabled new provider " + provider,
+                Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(this, "Disabled provider " + provider,
+                Toast.LENGTH_SHORT).show();
+    }
+
+
 }
